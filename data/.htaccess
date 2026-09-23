@@ -1,0 +1,2 @@
+# Block all direct web access to stored data (bookings, messages, drivers, PINs)
+Require all denied

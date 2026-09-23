@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin.php
+Disallow: /driver.php
+Disallow: /track.html
+Disallow: /api/
+Disallow: /data/
+
+Sitemap: https://rlinetaxis.com/sitemap.xml

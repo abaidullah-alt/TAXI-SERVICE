@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Track Your Booking | R Line Taxis</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d1b2a'/%3E%3Ctext x='16' y='23' font-family='Georgia' font-size='20' fill='%23c9a24b' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1b2a;--navy2:#13263b;--gold:#c9a24b;--gold2:#e6cd8f;--paper:#faf7f2;--ink:#1d2530;--muted:#5c6674;--line:#e8e2d6;--serif:'Playfair Display',serif;--sans:'Inter',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--serif)}
+.btn{display:inline-block;padding:12px 26px;border-radius:2px;text-decoration:none;font-weight:600;letter-spacing:.08em;font-size:.85rem;text-transform:uppercase;transition:.25s;cursor:pointer;border:none;font-family:var(--sans)}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover{background:var(--gold2)}
+header{background:var(--navy);padding:16px 0}
+.nav{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:var(--serif);font-size:1.3rem;color:#fff;text-decoration:none;letter-spacing:.06em}
+.logo em{color:var(--gold);font-style:normal}
+.logo small{display:block;font-size:.58rem;letter-spacing:.4em;color:var(--gold2);text-transform:uppercase}
+main{padding:50px 0 70px}
+.card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);padding:30px}
+.gate{max-width:440px;margin:40px auto;text-align:center}
+.gate h1{font-size:1.7rem;margin-bottom:8px}
+.gate p{color:var(--muted);font-size:.92rem;margin-bottom:22px}
+.gate input{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:2px;font-family:var(--sans);font-size:1.05rem;text-align:center;letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;background:#fff;color:var(--ink)}
+.gate input:focus{outline:none;border-color:var(--gold)}
+.err{color:#b23b3b;font-size:.85rem;margin-top:12px;min-height:1em}
+.grid{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:start}
+.eyebrow-sm{color:var(--gold);letter-spacing:.25em;font-size:.7rem;text-transform:uppercase;margin-bottom:10px}
+.route{font-family:var(--serif);font-size:1.25rem;line-height:1.5;margin-bottom:16px}
+.route .arrow{color:var(--gold);margin:0 8px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.kv span:first-child{color:var(--muted)}
+.timeline{margin-top:24px}
+.timeline h3{font-size:1.1rem;margin-bottom:14px}
+.tl-node{display:flex;align-items:center;gap:14px;padding:9px 0;color:var(--muted);font-size:.93rem}
+.tl-node .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);flex-shrink:0}
+.tl-node.on{color:var(--ink)}
+.tl-node.on .dot{border-color:var(--gold);background:var(--gold)}
+.tl-node.now .dot{box-shadow:0 0 0 4px rgba(201,162,75,.25)}
+.cancelled{background:rgba(178,59,59,.08);border:1px solid #b23b3b;color:#8f2f2f;padding:14px;border-radius:4px;font-size:.88rem}
+.chat{display:flex;flex-direction:column}
+.chat-head{padding:16px 20px;border-bottom:1px solid var(--line)}
+.chat-head b{font-family:var(--serif);font-size:1.05rem;display:block}
+.chat-head span{color:var(--muted);font-size:.78rem}
+.msgs{display:flex;flex-direction:column;height:380px;overflow-y:auto;padding:16px;background:var(--paper)}
+.msg{max-width:78%;padding:12px 16px;border-radius:12px;margin-bottom:10px;font-size:.92rem}
+.msg.driver{background:#fff;border:1px solid var(--line);border-bottom-left-radius:2px;align-self:flex-start}
+.msg.passenger{background:var(--gold);color:var(--navy);border-bottom-right-radius:2px;align-self:flex-end}
+.msg small{display:block;opacity:.6;font-size:.68rem;margin-top:5px}
+.chat-form{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line)}
+.chat-form input{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:2px;font-family:var(--sans);background:#fff;color:var(--ink)}
+.chat-form input:focus{outline:none;border-color:var(--gold)}
+.backlink{display:block;text-align:center;margin-top:26px;color:var(--muted);font-size:.85rem}
+.backlink a{color:var(--navy)}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">R <em>LINE</em><small>Taxis · Brierley Hill</small></a>
+    <a href="tel:01384886601" class="btn btn-gold">Call 01384 886601</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="gate" class="gate card" style="display:none">
+    <h1>Track Your Booking</h1>
+    <p>Enter the reference from your confirmation, e.g. RL-A1B2C3.</p>
+    <form id="gateForm">
+      <input id="gateRef" placeholder="RL-XXXXXX" maxlength="10" required>
+      <button class="btn btn-gold" type="submit">Find My Booking</button>
+    </form>
+    <p class="err" id="gateErr"></p>
+  </div>
+
+  <div id="app" style="display:none">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <div class="eyebrow-sm">Booking <span id="tRef"></span></div>
+          <div class="route"><span id="tPickup"></span><span class="arrow">→</span><span id="tDropoff"></span></div>
+          <div class="kv"><span>Date & time</span><span id="tWhen"></span></div>
+          <div class="kv"><span>Vehicle</span><span id="tVeh"></span></div>
+          <div class="kv"><span>Passengers</span><span id="tPax"></span></div>
+          <div class="kv"><span>Estimate</span><span id="tEst"></span></div>
+        </div>
+        <div class="card timeline">
+          <h3>Status</h3>
+          <div id="tl"></div>
+        </div>
+      </div>
+      <div class="card chat">
+        <div class="chat-head"><b id="tDriver">R Line Office</b><span>Typically replies within minutes</span></div>
+        <div class="msgs" id="msgs"></div>
+        <form class="chat-form" id="chatForm">
+          <input type="hidden" name="ref" id="fRef"><input type="hidden" name="side" value="passenger">
+          <input name="text" id="chatText" placeholder="Message your driver…" maxlength="500" autocomplete="off">
+          <button class="btn btn-gold" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <span class="backlink">← <a href="index.html">Back to R Line Taxis</a></span>
+  </div>
+</main>
+
+<script>
+const VLBL = {saloon:'Saloon Car', estate:'Estate Car', mpv6:'6-Seater MPV', mpv8:'8-Seater MPV'};
+const ORDER = ['pending','confirmed','on_the_way','completed'];
+const LABELS = {pending:'Booking received', confirmed:'Booking confirmed', on_the_way:'Taxi on the way', completed:'Journey completed'};
+const ref = (new URLSearchParams(location.search).get('ref') || '').toUpperCase();
+let lastId = 0, booking = null;
+const q = id => document.getElementById(id);
+
+function renderBooking(){
+  const b = booking;
+  q('tRef').textContent = b.ref;
+  q('tPickup').textContent = b.pickup;
+  q('tDropoff').textContent = b.dropoff;
+  q('tWhen').textContent = b.date + ' ' + b.time;
+  q('tVeh').textContent = VLBL[b.vehicle] || b.vehicle;
+  q('tPax').textContent = b.passengers;
+  q('tEst').textContent = b.estimate || '—';
+  q('tDriver').textContent = b.driver ? 'Your driver: ' + b.driver : 'R Line Office';
+  const tl = q('tl'); tl.innerHTML = '';
+  if (b.status === 'cancelled'){
+    tl.innerHTML = '<div class="cancelled">This booking was cancelled. Call us on 01384 886601 if this is unexpected.</div>';
+    return;
+  }
+  const idx = ORDER.indexOf(b.status);
+  ORDER.forEach((k,i) => {
+    const d = document.createElement('div');
+    d.className = 'tl-node' + (i <= idx ? ' on' : '') + (i === idx ? ' now' : '');
+    d.innerHTML = '<span class="dot"></span><span>' + LABELS[k] + '</span>';
+    tl.appendChild(d);
+  });
+}
+function addMsg(m){
+  lastId = Math.max(lastId, +m.id);
+  const w = document.createElement('div');
+  w.className = 'msg ' + (m.side === 'passenger' ? 'passenger' : 'driver');
+  const t = document.createElement('div'); t.textContent = m.text;
+  const s = document.createElement('small');
+  s.textContent = new Date(m.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+    + (m.side === 'driver' ? (booking && booking.driver ? ' · ' + booking.driver : ' · Office') : '');
+  w.append(t, s);
+  q('msgs').appendChild(w);
+  q('msgs').scrollTop = q('msgs').scrollHeight;
+}
+async function poll(){
+  try {
+    const r = await fetch('api/poll.php?ref=' + encodeURIComponent(ref) + '&after=' + lastId);
+    const d = await r.json();
+    if (!d.ok){
+      if (d.error === 'Booking not found'){
+        q('app').style.display = 'none';
+        q('gate').style.display = 'block';
+        q('gateErr').textContent = 'Booking not found — check the reference.';
+      }
+      return;
+    }
+    booking = d.booking;
+    renderBooking();
+    d.messages.forEach(addMsg);
+  } catch {}
+}
+q('gateForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = q('gateRef').value.trim().toUpperCase();
+  if (v) location.search = '?ref=' + encodeURIComponent(v);
+});
+q('chatForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const i = q('chatText');
+  if (!i.value.trim()) return;
+  try { await fetch('api/message.php', {method:'POST', body:new FormData(q('chatForm'))}); } catch {}
+  i.value = '';
+  poll();
+});
+if (ref){
+  q('gate').style.display = 'none';
+  q('app').style.display = 'block';
+  q('fRef').value = ref;
+  poll();
+  setInterval(poll, 4000);
+} else {
+  q('gate').style.display = 'block';
+}
+</script>
+</body>
+</html>
