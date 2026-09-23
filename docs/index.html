@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taxi Booking System - Live Demo</title>
+<style>
+:root{--bg:#0e1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;--mut:#8b949e;--acc:#f5c518;--ok:#3fb950;--warn:#d29922;--blue:#58a6ff;--red:#f85149}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:18px}
+h1 b{color:var(--acc)}
+.badge{font-size:11px;color:var(--mut);border:1px solid var(--line);padding:4px 10px;border-radius:999px}
+nav{display:flex;gap:6px;padding:14px 20px 0;flex-wrap:wrap}
+nav button{background:none;border:1px solid var(--line);border-bottom:none;color:var(--mut);padding:9px 15px;border-radius:9px 9px 0 0;cursor:pointer;font-size:14px}
+nav button.on{color:var(--txt);font-weight:600;border-color:var(--acc)}
+main{padding:20px;max-width:840px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+h2{font-size:15px;color:var(--acc);margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--txt);padding:10px;border-radius:8px;font-size:14px}
+.btn{background:var(--acc);color:#111;border:none;padding:11px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px;margin-top:12px}
+.btn.sec{background:#21262d;color:var(--txt)}
+.btn.sm{padding:6px 10px;font-size:12px;margin:0}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>div{flex:1;min-width:150px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-size:11px;text-transform:uppercase}
+.st{padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.st-pending{background:#3d2b00;color:var(--warn)}
+.st-accepted{background:#0a2e5c;color:var(--blue)}
+.st-enroute{background:#0a2e5c;color:#79c0ff}
+.st-arrived{background:#1c4a1c;color:var(--ok)}
+.st-completed{background:#12331f;color:var(--ok)}
+.st-cancelled{background:#4a1414;color:var(--red)}
+.ref{font-family:monospace;color:var(--acc);font-weight:700}
+.route{position:relative;height:64px;border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden}
+.road{position:absolute;top:30px;left:2%;right:4%;height:4px;background:var(--line);border-radius:2px}
+.car{position:absolute;top:14px;left:2%;font-size:22px;transition:left 1s linear}
+.dest{position:absolute;top:12px;right:2%;font-size:18px}
+.rlabel{position:absolute;top:44px;font-size:10px;color:var(--mut)}
+.chat{height:170px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.msg{max-width:78%;padding:7px 11px;border-radius:10px;font-size:13px;word-break:break-word}
+.msg-d{background:#1c2536;align-self:flex-start}
+.msg-p{background:#3d2b00;align-self:flex-end}
+.hint{font-size:12px;color:var(--mut);margin-top:8px}
+.ok{color:var(--ok);font-weight:600}
+.err{color:var(--red);font-weight:600}
+.tl{list-style:none;margin-top:10px}
+.tl li{padding:5px 0 5px 20px;position:relative;color:var(--mut);font-size:13px}
+.tl li::before{content:"";position:absolute;left:4px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--line)}
+.tl li.done{color:var(--txt)}
+.tl li.done::before{background:var(--ok)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header>
+<h1><b>TAXI</b> Booking System <span style="font-weight:400;color:var(--mut)">- Live Demo</span></h1>
+<span class="badge">Client-side simulation of the PHP app in this repository</span>
+</header>
+<nav>
+<button id="t-book" class="on" onclick="tab('book')">Book a Ride</button>
+<button id="t-track" onclick="tab('track')">Track Ride</button>
+<button id="t-driver" onclick="tab('driver')">Driver Portal</button>
+<button id="t-admin" onclick="tab('admin')">Admin</button>
+</nav>
+<main>
+<section id="p-book">
+<div class="card">
+<h2>Book a Ride</h2>
+<form onsubmit="return submitBooking(event)">
+<div class="row">
+<div><label>Pickup Location</label><input name="from" required placeholder="e.g. City Centre Station"></div>
+<div><label>Destination</label><input name="to" required placeholder="e.g. Airport Terminal 2"></div>
+</div>
+<div class="row">
+<div><label>Pickup Date and Time</label><input type="datetime-local" name="when" required></div>
+<div><label>Passengers</label><select name="pax"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+</div>
+<div class="row">
+<div><label>Your Name</label><input name="name" required placeholder="Full name"></div>
+<div><label>Phone</label><input name="phone" required placeholder="+44 7000 000000"></div>
+</div>
+<button class="btn" type="submit">Confirm Booking</button>
+</form>
+<div id="bookResult" style="margin-top:12px"></div>
+<p class="hint">This demo stores data in your browser only. In the real application this form posts to a PHP API that saves the booking, emails a confirmation and generates a public tracking link.</p>
+</div>
+</section>
+<section id="p-track" class="hide">
+<div class="card">
+<h2>Track Your Ride</h2>
+<div class="row" style="align-items:flex-end">
+<div style="flex:2"><label>Booking Reference</label><input id="trackInput" placeholder="TX-XXXXX"></div>
+<div><button class="btn" style="margin-top:0" onclick="trackRef()">Track</button></div>
+</div>
+<div id="trackArea" style="margin-top:14px"><p class="hint">Enter your booking reference. Try the seeded demo ride: TX-DEMO2</p></div>
+</div>
+</section>
+<section id="p-driver" class="hide">
+<div class="card">
+<h2>Driver Portal</h2>
+<p class="hint" style="margin:0 0 10px">Rides assigned to you. Accept a job, then update its status as you go.</p>
+<div id="driverArea"></div>
+</div>
+</section>
+<section id="p-admin" class="hide">
+<div class="card">
+<h2>Admin Dashboard</h2>
+<div id="adminArea"></div>
+</div>
+</section>
+</main>
+<script>
+var KEY='demo_bookings';
+var STEPS=['pending','accepted','enroute','arrived','completed'];
+var LABEL={pending:'Waiting for driver',accepted:'Driver assigned',enroute:'Driver on the way',arrived:'Driver at pickup',completed:'Ride completed',cancelled:'Cancelled'};
+var NEXT={accepted:'enroute',enroute:'arrived',arrived:'completed'};
+var BTN={accepted:'Start Trip',enroute:'Mark Arrived',arrived:'Complete Ride'};
+var REPLIES=['Sure, no problem.','About 5 minutes away.','See you at the pickup point.','Noted, thanks.','Traffic is light, should be quick.'];
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(bookings))}
+var bookings=load();
+var tracked=null;
+if(!localStorage.getItem('demo_seeded')){
+bookings.push({ref:'TX-DEMO1',name:'Sarah K.',phone:'+44 7000 111222',from:'City Centre Station',to:'Airport Terminal 2',when:'Today 14:30',pax:'2',status:'completed',progress:100,msgs:[{who:'d',text:'Thanks for riding with us! Please rate 5 stars.'}],created:Date.now()-86400000});
+bookings.push({ref:'TX-DEMO2',name:'James T.',phone:'+44 7000 333444',from:'Riverside Hotel',to:'Central Hospital',when:'Today 17:00',pax:'1',status:'pending',progress:0,msgs:[],created:Date.now()});
+save();localStorage.setItem('demo_seeded','1');
+}
+function esc(s){return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function find(ref){for(var i=0;i<bookings.length;i++){if(bookings[i].ref===ref)return bookings[i]}return null}
+function tab(name){
+['book','track','driver','admin'].forEach(function(n){
+document.getElementById('p-'+n).classList.toggle('hide',n!==name);
+document.getElementById('t-'+n).classList.toggle('on',n===name);
+});
+if(name==='driver')renderDriver();
+if(name==='admin')renderAdmin();
+}
+function mkRef(){var c='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<5;i++)s+=c[Math.floor(Math.random()*c.length)];return 'TX-'+s}
+function submitBooking(e){
+e.preventDefault();
+var f=e.target;
+var b={ref:mkRef(),name:f.name.value,phone:f.phone.value,from:f.from.value,to:f.to.value,when:f.when.value.replace('T',' '),pax:f.pax.value,status:'pending',progress:0,msgs:[],created:Date.now()};
+bookings.unshift(b);save();
+document.getElementById('bookResult').innerHTML='<p class="ok">Booking confirmed. Your reference:</p><p class="ref" style="font-size:24px">'+b.ref+'</p><p class="hint">Track it in the Track Ride tab, or accept the job in the Driver Portal to watch the ride progress live.</p>';
+f.reset();
+}
+function trackRef(){
+var ref=document.getElementById('trackInput').value.trim().toUpperCase();
+var b=find(ref);
+if(!b){tracked=null;document.getElementById('trackArea').innerHTML='<p class="err">No booking found for '+esc(ref)+'</p>';return}
+tracked=ref;renderTrack();
+}
+function carPos(b){
+if(b.status==='completed'||b.status==='arrived')return 92;
+if(b.status==='enroute')return 2+Math.round(b.progress*0.85);
+return 2;
+}
+function renderTrack(){
+var b=find(tracked);if(!b)return;
+var idx=STEPS.indexOf(b.status);
+var tl=STEPS.map(function(s,i){return '<li class="'+(i<=idx?'done':'')+'">'+LABEL[s]+'</li>'}).join('');
+var msgs=b.msgs.map(function(m){return '<div class="msg msg-'+m.who+'">'+esc(m.text)+'</div>'}).join('');
+var chatOpen=(b.status==='completed'&&b.status!=='cancelled')?' disabled':'';
+document.getElementById('trackArea').innerHTML=
+'<p style="font-size:14px"><span class="ref">'+b.ref+'</span> &rarr; '+esc(b.from)+' &rarr; '+esc(b.to)+' <span class="st st-'+b.status+'">'+LABEL[b.status]+'</span></p>'+
+'<div class="route"><div class="road"></div><div class="car" style="left:'+carPos(b)+'%">&#128661;</div><div class="dest">&#128205;</div><span class="rlabel" style="left:2%">DRIVER</span><span class="rlabel" style="right:2%">PICKUP</span></div>'+
+'<ul class="tl">'+tl+'</ul>'+
+'<h2 style="margin-top:16px">Chat with Driver</h2>'+
+'<div class="chat" id="chatBox">'+(msgs||'<div class="hint">No messages yet</div>')+'</div>'+
+'<div class="row" style="margin-top:8px"><div style="flex:3"><input id="msgInput" placeholder="Type a message..."'+chatOpen+'></div><div><button class="btn sec sm" onclick="sendMsg()">Send</button></div></div>';
+var box=document.getElementById('chatBox');box.scrollTop=box.scrollHeight;
+}
+function sendMsg(){
+var b=find(tracked);if(!b)return;
+var el=document.getElementById('msgInput');
+var t=el.value.trim();if(!t)return;
+b.msgs.push({who:'p',text:t});el.value='';save();renderTrack();
+setTimeout(function(){
+b.msgs.push({who:'d',text:REPLIES[Math.floor(Math.random()*REPLIES.length)]});
+save();if(tracked===b.ref)renderTrack();
+},1200);
+}
+function pushMsg(b,who,text){b.msgs.push({who:who,text:text})}
+function act(ref,action){
+var b=find(ref);if(!b)return;
+if(action==='accept'){b.status='accepted';pushMsg(b,'d','Hi '+esc(b.name.split(' ')[0])+', I am your driver. See you soon!')}
+else if(action==='next'){b.status=NEXT[b.status];
+if(b.status==='enroute'){b.progress=0;pushMsg(b,'d','Heading to '+b.from+' now.')}
+if(b.status==='arrived'){pushMsg(b,'d','I have arrived at the pickup point.')}
+if(b.status==='completed'){pushMsg(b,'d','Thanks for riding with us! Please rate 5 stars.')}
+}
+else if(action==='cancel'){b.status='cancelled'}
+save();renderDriver();
+if(tracked===ref)renderTrack();
+}
+function renderDriver(){
+var list=bookings.filter(function(b){return b.status!=='completed'&&b.status!=='cancelled'});
+if(!list.length){document.getElementById('driverArea').innerHTML='<p class="hint">No active jobs. Create a booking in the Book a Ride tab.</p>';return}
+document.getElementById('driverArea').innerHTML=list.map(function(b){
+var btn='';
+if(b.status==='pending')btn='<button class="btn sm" onclick="act(\''+b.ref+'\',\'accept\')">Accept</button>';
+else btn='<button class="btn sm sec" onclick="act(\''+b.ref+'\',\'next\')">'+BTN[b.status]+'</button>';
+return '<div class="card" style="margin-bottom:10px"><p><span class="ref">'+b.ref+'</span> &rarr; '+esc(b.name)+' &rarr; '+esc(b.phone)+'</p><p class="hint" style="margin:4px 0">'+esc(b.from)+' &rarr; '+esc(b.to)+' &rarr; '+esc(b.when)+' &rarr; '+b.pax+' passenger(s)</p><div class="row" style="justify-content:space-between;align-items:center"><span class="st st-'+b.status+'">'+LABEL[b.status]+'</span>'+btn+'</div></div>';
+}).join('');
+}
+function del(ref){bookings=bookings.filter(function(b){return b.ref!==ref});save();renderAdmin();if(tracked===ref)tracked=null}
+function renderAdmin(){
+if(!bookings.length){document.getElementById('adminArea').innerHTML='<p class="hint">No bookings yet.</p>';return}
+document.getElementById('adminArea').innerHTML=
+'<table><tr><th>Ref</th><th>Passenger</th><th>Route</th><th>Status</th><th></th></tr>'+
+bookings.map(function(b){
+return '<tr><td class="ref">'+b.ref+'</td><td>'+esc(b.name)+'</td><td>'+esc(b.from)+' &rarr; '+esc(b.to)+'</td><td><span class="st st-'+b.status+'">'+LABEL[b.status]+'</span></td><td><button class="btn sm sec" onclick="del(\''+b.ref+'\')">Delete</button></td></tr>';
+}).join('')+'</table>';
+}
+setInterval(function(){
+var changed=false;
+bookings.forEach(function(b){
+if(b.status==='enroute'&&b.progress<100){b.progress=Math.min(100,b.progress+2);changed=true}
+});
+if(changed){save();if(tracked&&find(tracked)&&!document.getElementById('p-track').classList.contains('hide'))renderTrack()}
+},1000);
+</script>
+</body>
+</html>
